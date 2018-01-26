@@ -64,9 +64,10 @@ lazy val tagName = Def.setting{
 
 lazy val commonJsSettings = Seq(
   scalacOptions += {
+    val tv = tagName.value
     val tagOrHash =
-      if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lines_!.head
-      else tagName.value
+      if (isSnapshot.value) sys.process.Process("git rev-parse HEAD").lineStream_!.head
+      else tv
     val a = (baseDirectory in LocalRootProject).value.toURI.toString
     val g = "https://raw.githubusercontent.com/typelevel/cats/" + tagOrHash
     s"-P:scalajs:mapSourceURI:$a->$g/"
@@ -127,8 +128,12 @@ def docsSourcesAndProjects(sv: String): (Boolean, Seq[ProjectReference]) =
   }
 
 lazy val javadocSettings = Seq(
-  sources in (Compile, doc) := (if (docsSourcesAndProjects(scalaVersion.value)._1) (sources in (Compile, doc)).value else Nil)
+  sources in (Compile, doc) := {
+    val docSource = (sources in (Compile, doc)).value
+    if (docsSourcesAndProjects(scalaVersion.value)._1) docSource else Nil
+  }
 )
+
 
 lazy val docsMappingsAPIDir = settingKey[String]("Name of subdirectory in site target directory for api docs")
 
@@ -144,7 +149,7 @@ lazy val docSettings = Seq(
   micrositeHighlightTheme := "atom-one-light",
   micrositeHomepage := "http://typelevel.org/cats/",
   micrositeBaseUrl := "cats",
-  micrositeDocumentationUrl := "api/cats/index.html",
+  micrositeDocumentationUrl := "/cats/api/cats/index.html",
   micrositeGithubOwner := "typelevel",
   micrositeExtraMdFiles := Map(
     file("CONTRIBUTING.md") -> ExtraMdFileConfig(
@@ -178,6 +183,7 @@ lazy val docSettings = Seq(
   fork in (ScalaUnidoc, unidoc) := true,
   scalacOptions in (ScalaUnidoc, unidoc) ++= Seq(
     "-Xfatal-warnings",
+    "-groups",
     "-doc-source-url", scmInfo.value.get.browseUrl + "/tree/master€{FILE_PATH}.scala",
     "-sourcepath", baseDirectory.in(LocalRootProject).value.getAbsolutePath,
     "-diagrams"
@@ -188,144 +194,10 @@ lazy val docSettings = Seq(
   includeFilter in Jekyll := (includeFilter in makeSite).value
 )
 
-lazy val binaryCompatibleVersion = "1.0.0-RC1"
+lazy val binaryCompatibleVersion = "1.0.0"
 
 def mimaSettings(moduleName: String) = Seq(
-  mimaPreviousArtifacts := Set("org.typelevel" %% moduleName % binaryCompatibleVersion),
-  // TODO: remove this post-release of 1.0.0
-  mimaBinaryIssueFilters ++= {
-    import com.typesafe.tools.mima.core._
-    import com.typesafe.tools.mima.core.ProblemFilters._
-    Seq(
-      exclude[ReversedMissingMethodProblem]("cats.syntax.FoldableSyntax.catsSyntaxFoldOps"),
-      exclude[ReversedMissingMethodProblem]("cats.arrow.Arrow.merge"),
-      exclude[ReversedMissingMethodProblem]("cats.arrow.Arrow#Ops.merge"),
-      exclude[ReversedMissingMethodProblem]("cats.arrow.Arrow#Ops.&&&"),
-      exclude[ReversedMissingMethodProblem]("cats.Traverse.unorderedTraverse"),
-      exclude[ReversedMissingMethodProblem]("cats.Traverse.unorderedSequence"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedTraverse.unorderedTraverse"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedTraverse.unorderedSequence"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedFoldable.toSet"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedFoldable.unorderedFold"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedFoldable.unorderedFoldMap"),
-      exclude[IncompatibleResultTypeProblem]("cats.implicits.catsStdInstancesForMap"),
-      exclude[IncompatibleResultTypeProblem]("cats.implicits.catsStdInstancesForSet"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedFoldable#Ops.toSet"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedFoldable#Ops.unorderedFold"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedFoldable#Ops.unorderedFoldMap"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedTraverse#Ops.unorderedTraverse"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedTraverse#Ops.unorderedSequence"),
-      exclude[UpdateForwarderBodyProblem]("cats.Foldable.size"),
-      exclude[ReversedMissingMethodProblem]("cats.Foldable.unorderedFold"),
-      exclude[ReversedMissingMethodProblem]("cats.Foldable.unorderedFoldMap"),
-      exclude[DirectMissingMethodProblem]("cats.Foldable#Ops.size"),
-      exclude[DirectMissingMethodProblem]("cats.Foldable#Ops.forall"),
-      exclude[DirectMissingMethodProblem]("cats.Foldable#Ops.isEmpty"),
-      exclude[DirectMissingMethodProblem]("cats.Foldable#Ops.nonEmpty"),
-      exclude[DirectMissingMethodProblem]("cats.Foldable#Ops.exists"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedFoldable#ToUnorderedFoldableOps.toUnorderedFoldableOps"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.UnorderedFoldable#ToUnorderedFoldableOps.toUnorderedFoldableOps"),
-      exclude[IncompatibleResultTypeProblem]("cats.instances.SetInstances.catsStdInstancesForSet"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.SetInstances.cats$instances$SetInstances$_setter_$catsStdInstancesForSet_="),
-      exclude[ReversedMissingMethodProblem]("cats.instances.SetInstances.catsStdInstancesForSet"),
-      exclude[DirectMissingMethodProblem]("cats.instances.MapInstances.catsStdInstancesForMap"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.MapInstances.catsStdInstancesForMap"),
-      exclude[IncompatibleResultTypeProblem]("cats.instances.package#all.catsStdInstancesForMap"),
-      exclude[IncompatibleResultTypeProblem]("cats.instances.package#all.catsStdInstancesForSet"),
-      exclude[IncompatibleResultTypeProblem]("cats.instances.package#map.catsStdInstancesForMap"),
-      exclude[IncompatibleResultTypeProblem]("cats.instances.package#set.catsStdInstancesForSet"),
-      exclude[IncompatibleResultTypeProblem]("cats.instances.MapInstances.catsStdInstancesForMap"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.SortedMapInstances.catsStdCommutativeMonoidForSortedMap"),
-      exclude[UpdateForwarderBodyProblem]("cats.instances.SortedMapInstances.catsStdMonoidForSortedMap"),
-      exclude[DirectMissingMethodProblem]("cats.data.EitherTInstances2.catsDataMonadErrorForEitherT"),
-      exclude[MissingTypesProblem]("cats.data.OneAndLowPriority3"),
-      exclude[MissingTypesProblem]("cats.data.OneAndLowPriority2"),
-      exclude[MissingTypesProblem]("cats.data.OneAndLowPriority1"),
-      exclude[ReversedMissingMethodProblem]("cats.Contravariant.liftContravariant"),
-      exclude[DirectMissingMethodProblem]("cats.implicits.catsContravariantSemigroupalForEq"),
-      exclude[DirectMissingMethodProblem]("cats.implicits.catsContravariantSemigroupalForOrder"),
-      exclude[DirectMissingMethodProblem]("cats.implicits.catsContravariantSemigroupalForOrdering"),
-      exclude[DirectMissingMethodProblem]("cats.implicits.catsContravariantSemigroupalEquiv"),
-      exclude[ReversedMissingMethodProblem]("cats.ContravariantSemigroupal.contramap2"),
-      exclude[ReversedMissingMethodProblem]("cats.ContravariantSemigroupal#Ops.contramap2"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.ContravariantMonoidal#ToContravariantMonoidalOps.toContravariantMonoidalOps"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.ContravariantSemigroupal#ToContravariantSemigroupalOps.toContravariantSemigroupalOps"),
-      exclude[ReversedMissingMethodProblem]("cats.Applicative.composeContravariantMonoidal"),
-      exclude[UpdateForwarderBodyProblem]("cats.instances.Function1Instances.catsStdContravariantForFunction1"),
-      exclude[DirectMissingMethodProblem]("cats.instances.package=uiv.catsContravariantSemigroupalEquiv"),
-      exclude[DirectMissingMethodProblem]("cats.instances.OrderingInstances.catsContravariantSemigroupalForOrdering"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.OrderingInstances.cats$instances$OrderingInstances$_setter_$catsContravariantMonoidalForOrdering_="),
-      exclude[ReversedMissingMethodProblem]("cats.instances.OrderingInstances.catsContravariantMonoidalForOrdering"),
-      exclude[DirectMissingMethodProblem]("cats.instances.OrderInstances.catsContravariantSemigroupalForOrder"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.OrderInstances.catsContravariantMonoidalForOrder"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.OrderInstances.cats$instances$OrderInstances$_setter_$catsContravariantMonoidalForOrder_="),
-      exclude[DirectMissingMethodProblem]("cats.instances.package#ordering.catsContravariantSemigroupalForOrdering"),
-      exclude[DirectMissingMethodProblem]("cats.instances.package#all.catsContravariantSemigroupalForEq"),
-      exclude[DirectMissingMethodProblem]("cats.instances.package#all.catsContravariantSemigroupalForOrder"),
-      exclude[DirectMissingMethodProblem]("cats.instances.package#all.catsContravariantSemigroupalForOrdering"),
-      exclude[DirectMissingMethodProblem]("cats.instances.package#all.catsContravariantSemigroupalEquiv"),
-      exclude[DirectMissingMethodProblem]("cats.instances.EquivInstances.catsContravariantSemigroupalEquiv"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.EquivInstances.catsContravariantMonoidalForEquiv"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.EquivInstances.cats$instances$EquivInstances$_setter_$catsContravariantMonoidalForEquiv_="),
-      exclude[DirectMissingMethodProblem]("cats.instances.package=.catsContravariantSemigroupalForEq"),
-      exclude[DirectMissingMethodProblem]("cats.instances.package#order.catsContravariantSemigroupalForOrder"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.Function1Instances.catsStdContravariantMonoidalForFunction1"),
-      exclude[DirectMissingMethodProblem]("cats.instances.EqInstances.catsContravariantSemigroupalForEq"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.EqInstances.catsContravariantMonoidalForEq"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.EqInstances.cats$instances$EqInstances$_setter_$catsContravariantMonoidalForEq_="),
-      exclude[InheritedNewAbstractMethodProblem]("cats.syntax.ContravariantSemigroupalSyntax.catsSyntaxContravariantSemigroupal"),
-      exclude[InheritedNewAbstractMethodProblem]("cats.syntax.ContravariantMonoidalSyntax.catsSyntaxContravariantMonoidal"),
-      exclude[DirectMissingMethodProblem]("cats.data.OneAndLowPriority3.catsDataNonEmptyTraverseForOneAnd"),
-      exclude[DirectMissingMethodProblem]("cats.data.OneAndLowPriority2.catsDataTraverseForOneAnd"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.ParallelInstances.catsStdNonEmptyParallelForZipVector"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.ParallelInstances.catsStdParallelForZipStream"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.ParallelInstances.catsStdNonEmptyParallelForZipList"),
-      exclude[ReversedMissingMethodProblem]("cats.instances.ParallelInstances.catsStdParallelForFailFastFuture"),
-      exclude[DirectMissingMethodProblem]("cats.data.EitherTInstances2.catsDataMonadErrorForEitherT"),
-      exclude[ReversedMissingMethodProblem]("cats.Functor.fmap"),
-      exclude[ReversedMissingMethodProblem]("cats.Functor#Ops.fmap"),
-      exclude[ReversedMissingMethodProblem]("cats.Foldable.collectFirstSome"),
-      exclude[ReversedMissingMethodProblem]("cats.Foldable.collectFirst"),
-      exclude[ReversedMissingMethodProblem]("cats.Foldable#Ops.collectFirstSome"),
-      exclude[ReversedMissingMethodProblem]("cats.Foldable#Ops.collectFirst"),
-      exclude[ReversedMissingMethodProblem]("cats.data.CommonIRWSTConstructors.liftF"),
-      exclude[ReversedMissingMethodProblem]("cats.data.CommonIRWSTConstructors.liftK"),
-      exclude[ReversedMissingMethodProblem]("cats.data.KleisliFunctions.liftF"),
-      exclude[ReversedMissingMethodProblem]("cats.data.KleisliFunctions.liftK"),
-      exclude[ReversedMissingMethodProblem]("cats.data.CommonStateTConstructors.liftF"),
-      exclude[ReversedMissingMethodProblem]("cats.data.CommonStateTConstructors.liftK"),
-      exclude[ReversedMissingMethodProblem]("cats.NonEmptyParallel.parForEffect"),
-      exclude[ReversedMissingMethodProblem]("cats.NonEmptyParallel.parFollowedBy"),
-      exclude[ReversedMissingMethodProblem]("cats.syntax.ParallelSyntax.catsSyntaxParallelAp"),
-      exclude[DirectMissingMethodProblem]("cats.FlatMap.>>="),
-      exclude[DirectMissingMethodProblem]("cats.FlatMap#Ops.>>="),
-      exclude[IncompatibleMethTypeProblem]("cats.syntax.FlatMapOps.>>"),
-      exclude[IncompatibleMethTypeProblem]("cats.syntax.FlatMapOps.>>$extension"),
-      exclude[DirectMissingMethodProblem]("cats.data.IndexedStateTMonad.>>="),
-      exclude[DirectMissingMethodProblem]("cats.data.RWSTMonad.>>="),
-      exclude[DirectMissingMethodProblem]("cats.data.CokleisliMonad.>>="),
-      exclude[DirectMissingMethodProblem]("cats.instances.FlatMapTuple2.>>="),
-      exclude[DirectMissingMethodProblem]("cats.Applicative.traverse"),
-      exclude[DirectMissingMethodProblem]("cats.Applicative.sequence"),
-      exclude[DirectMissingMethodProblem]("cats.data.IndexedStateTMonad.traverse"),
-      exclude[DirectMissingMethodProblem]("cats.data.IndexedStateTMonad.sequence"),
-      exclude[DirectMissingMethodProblem]("cats.data.RWSTMonad.traverse"),
-      exclude[DirectMissingMethodProblem]("cats.data.RWSTMonad.sequence"),
-      exclude[DirectMissingMethodProblem]("cats.data.CokleisliMonad.traverse"),
-      exclude[DirectMissingMethodProblem]("cats.data.CokleisliMonad.sequence"),
-      exclude[DirectMissingMethodProblem]("cats.data.NestedApplicativeError.traverse"),
-      exclude[DirectMissingMethodProblem]("cats.data.NestedApplicativeError.sequence"),
-      exclude[DirectMissingMethodProblem]("cats.data.ValidatedApplicative.traverse"),
-      exclude[DirectMissingMethodProblem]("cats.data.ValidatedApplicative.sequence"),
-      exclude[ReversedMissingMethodProblem]("cats.data.IorFunctions.fromEither"),
-      exclude[DirectMissingMethodProblem]("cats.data.RWSTAlternative.traverse"),
-      exclude[DirectMissingMethodProblem]("cats.data.RWSTAlternative.sequence"),
-      exclude[ReversedMissingMethodProblem]("cats.MonadError.rethrow"),
-      exclude[ReversedMissingMethodProblem]("cats.syntax.MonadErrorSyntax.catsSyntaxMonadErrorRethrow"),
-      exclude[DirectMissingMethodProblem]("cats.data.CokleisliArrow.id"),
-      exclude[IncompatibleResultTypeProblem]("cats.data.CokleisliArrow.id")
-    )
-  }
+  mimaPreviousArtifacts := Set("org.typelevel" %% moduleName % binaryCompatibleVersion)
 )
 
 lazy val docs = project
@@ -739,7 +611,7 @@ lazy val sharedReleaseProcess = Seq(
     publishArtifacts,
     setNextVersion,
     commitNextVersion,
-    ReleaseStep(action = Command.process("sonatypeReleaseAll", _), enableCrossBuild = true),
+    releaseStepCommand("sonatypeReleaseAll"),
     pushChanges)
 )
 

@@ -51,6 +51,15 @@ class NestedSuite extends CatsSuite {
   }
 
   {
+    // InvariantSemigroupal + Apply functor composition
+    implicit val instance = ListWrapper.invariantSemigroupal
+    checkAll("Nested[ListWrapper, Option, ?]",
+      InvariantSemigroupalTests[Nested[ListWrapper, Option, ?]].invariantSemigroupal[Int, Int, Int])
+    checkAll("InvariantSemigroupal[Nested[ListWrapper, Const[String, ?], ?]",
+      SerializableTests.serializable(InvariantSemigroupal[Nested[ListWrapper, Option, ?]]))
+  }
+
+  {
     // Applicative + ContravariantMonoidal functor composition
     checkAll("Nested[Option, Const[String, ?], ?]",
       ContravariantMonoidalTests[Nested[Option, Const[String, ?], ?]].contravariantMonoidal[Int, Int, Int])
@@ -152,5 +161,12 @@ class NestedSuite extends CatsSuite {
     implicit val instance = ListWrapper.monoidK
     checkAll("Nested[ListWrapper, Option, ?]", MonoidKTests[Nested[ListWrapper, Option, ?]].monoidK[Int])
     checkAll("MonoidK[Nested[ListWrapper, Option, ?]]", SerializableTests.serializable(MonoidK[Nested[ListWrapper, Option, ?]]))
+  }
+
+  {
+    import cats.laws.discipline.eq._
+    //Distributive composition
+    checkAll("Nested[Function1[Int, ?], Function0, ?]", DistributiveTests[Nested[Function1[Int, ?], Function0, ?]].distributive[Int, Int, Int, Option, Function0])
+    checkAll("Distributive[Nested[Function1[Int,?], Function0, ?]]", SerializableTests.serializable(Distributive[Nested[Function1[Int,?], Function0, ?]]))
   }
 }

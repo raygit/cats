@@ -51,10 +51,10 @@ final case class OptionT[F[_], A](value: F[Option[A]]) {
   def subflatMap[B](f: A => Option[B])(implicit F: Functor[F]): OptionT[F, B] =
     transform(_.flatMap(f))
 
-  def getOrElse(default: => A)(implicit F: Functor[F]): F[A] =
+  def getOrElse[B >: A](default: => B)(implicit F: Functor[F]): F[B] =
     F.map(value)(_.getOrElse(default))
 
-  def getOrElseF(default: => F[A])(implicit F: Monad[F]): F[A] =
+  def getOrElseF[B >: A](default: => F[B])(implicit F: Monad[F]): F[B] =
     F.flatMap(value)(_.fold(default)(F.pure))
 
   def collect[B](f: PartialFunction[A, B])(implicit F: Functor[F]): OptionT[F, B] =
@@ -300,7 +300,7 @@ private trait OptionTMonadError[F[_], E] extends MonadError[OptionT[F, ?], E] wi
 private trait OptionTContravariantMonoidal[F[_]] extends ContravariantMonoidal[OptionT[F, ?]] {
   def F: ContravariantMonoidal[F]
 
-  override def unit[A]: OptionT[F, A] = OptionT (F.unit)
+  override def unit: OptionT[F, Unit] = OptionT(F.trivial)
 
   override def contramap[A, B](fa: OptionT[F, A])(f: B => A): OptionT[F, B] =
     OptionT(F.contramap(fa.value)(_ map f))

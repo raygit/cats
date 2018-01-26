@@ -14,7 +14,9 @@ import simulacrum.typeclass
  *
  * Must obey the laws defined in cats.laws.ApplicativeLaws.
  */
-@typeclass trait Applicative[F[_]] extends Apply[F] { self =>
+@typeclass trait Applicative[F[_]] extends Apply[F] with InvariantMonoidal[F] { self =>
+
+
 
   /**
    * `pure` lifts any value into the Applicative Functor.
@@ -184,6 +186,7 @@ import simulacrum.typeclass
    */
   def whenA[A](cond: Boolean)(f: => F[A]): F[Unit] =
     if (cond) void(f) else pure(())
+
 }
 
 object Applicative {
@@ -207,6 +210,28 @@ object Applicative {
    */
   implicit def catsApplicativeForArrow[F[_, _], A](implicit F: Arrow[F]): Applicative[F[A, ?]] =
     new ArrowApplicative[F, A](F)
+
+
+  /**
+   * Creates a CoflatMap for an Applicative `F`.
+   * Cannot be implicit in 1.0 for Binary Compatibility Reasons
+   *
+   * Example:
+   * {{{
+   * scala> import cats._
+   * scala> import cats.implicits._
+   * scala> val fa = Some(3)
+   * fa: Option[Int] = Some(3)
+   * scala> Applicative.coflatMap[Option].coflatten(fa)
+   * res0: Option[Option[Int]] = Some(Some(3))
+   * }}}
+   */
+  def coflatMap[F[_]](implicit F: Applicative[F]): CoflatMap[F] =
+    new CoflatMap[F] {
+      def coflatMap[A, B](fa: F[A])(f: F[A] => B): F[B] = F.pure(f(fa))
+      def map[A, B](fa: F[A])(f: A => B): F[B] = F.map(fa)(f)
+    }
+
 }
 
 private[cats] class ApplicativeMonoid[F[_], A](f: Applicative[F], monoid: Monoid[A]) extends ApplySemigroup(f, monoid) with Monoid[F[A]] {

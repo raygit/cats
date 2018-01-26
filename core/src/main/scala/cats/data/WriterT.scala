@@ -83,7 +83,7 @@ object WriterT extends WriterTInstances with WriterTFunctions {
   def liftK[F[_], L](implicit monoidL: Monoid[L], F: Applicative[F]): F ~> WriterT[F, L, ?] =
     λ[F ~> WriterT[F, L, ?]](WriterT.liftF(_))
 
-  @deprecated("Use liftF instead", "1.0.0")
+  @deprecated("Use liftF instead", "1.0.0-RC2")
   def lift[F[_], L, V](fv: F[V])(implicit monoidL: Monoid[L], F: Applicative[F]): WriterT[F, L, V] =
     WriterT(F.map(fv)(v => (monoidL.empty, v)))
 
@@ -378,7 +378,7 @@ private[data] sealed trait WriterTAlternative[F[_], L] extends Alternative[Write
 private[data] sealed trait WriterTContravariantMonoidal[F[_], L] extends ContravariantMonoidal[WriterT[F, L, ?]] {
   implicit def F0: ContravariantMonoidal[F]
 
-  override def unit[A]: WriterT[F, L, A] = WriterT(F0.unit[(L, A)])
+  override def unit: WriterT[F, L, Unit] = WriterT(F0.trivial[(L, Unit)])
 
   override def contramap[A, B](fa: WriterT[F, L, A])(f: B => A): WriterT[F, L, B] =
     WriterT(F0.contramap(fa.run)((d: (L, B)) => (d._1, f(d._2))))
