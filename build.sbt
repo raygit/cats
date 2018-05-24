@@ -204,10 +204,10 @@ lazy val docSettings = Seq(
   includeFilter in Jekyll := (includeFilter in makeSite).value
 )
 
-lazy val binaryCompatibleVersion = "1.0.0"
+lazy val binaryCompatibleVersions = Set("1.0.0", "1.1.0")
 
 def mimaSettings(moduleName: String) = Seq(
-  mimaPreviousArtifacts := Set("org.typelevel" %% moduleName % binaryCompatibleVersion)
+  mimaPreviousArtifacts := binaryCompatibleVersions.map(v => "org.typelevel" %% moduleName % v)
 )
 
 lazy val docs = project
@@ -411,7 +411,7 @@ lazy val bench = project.dependsOn(macrosJVM, coreJVM, freeJVM, lawsJVM)
   .settings(commonJvmSettings)
   .settings(coverageEnabled := false)
   .settings(libraryDependencies ++= Seq(
-    "org.scalaz" %% "scalaz-core" % "7.2.21"))
+    "org.scalaz" %% "scalaz-core" % "7.2.23"))
   .enablePlugins(JmhPlugin)
 
 // cats-js is JS-only
