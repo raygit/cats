@@ -9,6 +9,8 @@ import cats.laws.discipline.arbitrary._
 class OptionTSuite extends CatsSuite {
   implicit val iso = SemigroupalTests.Isomorphisms.invariant[OptionT[ListWrapper, ?]](OptionT.catsDataFunctorForOptionT(ListWrapper.functor))
 
+  checkAll("OptionT[Eval, ?]", DeferTests[OptionT[Eval, ?]].defer[Int])
+
   {
     implicit val F = ListWrapper.eqv[Option[Int]]
 
@@ -43,12 +45,12 @@ class OptionTSuite extends CatsSuite {
     checkAll("Functor[OptionT[ListWrapper, ?]]", SerializableTests.serializable(Functor[OptionT[ListWrapper, ?]]))
   }
 
-  
+
   {
-    // F has a ContravariantMonoidal 
+    // F has a ContravariantMonoidal
     checkAll("OptionT[Const[String, ?], Int]", ContravariantMonoidalTests[OptionT[Const[String, ?], ?]].contravariantMonoidal[Int, Int, Int])
     checkAll("ContravariantMonoidal[OptionT[Const[String, ?], Int]]",
-      SerializableTests.serializable(ContravariantMonoidal[OptionT[Const[String, ?], ?]])) 
+      SerializableTests.serializable(ContravariantMonoidal[OptionT[Const[String, ?], ?]]))
   }
 
   {
@@ -128,6 +130,13 @@ class OptionTSuite extends CatsSuite {
 
     checkAll("OptionT[ListWrapper, Int]", SemigroupTests[OptionT[ListWrapper, Int]].semigroup)
     checkAll("Semigroup[OptionT[ListWrapper, Int]]", SerializableTests.serializable(Semigroup[OptionT[ListWrapper, Int]]))
+  }
+
+  {
+    // MonadError instance where F has a Monad
+    implicit val F = ListWrapper.monad
+    checkAll("OptionT[ListWrapper, Int]", MonadErrorTests[OptionT[ListWrapper, ?], Unit].monadError[Int, Int, Int])
+    checkAll("MonadError[OptionT[List, ?]]", SerializableTests.serializable(MonadError[OptionT[ListWrapper, ?], Unit]))
   }
 
   test("fold and cata consistent") {
