@@ -22,7 +22,7 @@ You can read the API Documentation, [here](https://typelevel.org/cats/api/cats/i
 
 ### Getting Started
 
-Cats is currently available for Scala 2.10, 2.11 and 2.12, and [Scala.js](http://www.scala-js.org/).
+Cats is currently available for Scala 2.10 (up to 1.2.x), 2.11,  2.12, 2.13.0-M4,  and [Scala.js](http://www.scala-js.org/).
 
 
 Cats relies on improved type inference via the fix for [SI-2712](https://github.com/scala/bug/issues/2712), which is not enabled by default. For **Scala 2.11.9 or later** you should add the following to your `build.sbt`:
@@ -34,13 +34,13 @@ scalacOptions += "-Ypartial-unification"
 **Or**, if you need to support older versions of Scala you can use the [sbt-partial-unification](https://github.com/fiadliel/sbt-partial-unification#sbt-partial-unification) plugin which extends support back through **Scala 2.10.6 or later**, to add it, simply add this line to your `plugins.sbt`:
 
 ```scala
-addSbtPlugin("org.lyranthe.sbt" % "partial-unification" % "1.1.0")
+addSbtPlugin("org.lyranthe.sbt" % "partial-unification" % "1.2.0")
 ```
 
 And then create the Cats dependency, by adding the following to your `build.sbt`:
 
 ```scala
-libraryDependencies += "org.typelevel" %% "cats-core" % "1.1.0"
+libraryDependencies += "org.typelevel" %% "cats-core" % "1.2.0"
 ```
 
 This will pull in the cats-core module. If you require some other
