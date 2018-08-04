@@ -22,7 +22,7 @@ You can read the API Documentation, [here](https://typelevel.org/cats/api/cats/i
 
 ### Getting Started
 
-Cats is currently available for Scala 2.10, 2.11 and 2.12, and [Scala.js](http://www.scala-js.org/).
+Cats is currently available for Scala 2.10 (up to 1.2.x), 2.11,  2.12, 2.13.0-M4,  and [Scala.js](http://www.scala-js.org/).
 
 
 Cats relies on improved type inference via the fix for [SI-2712](https://github.com/scala/bug/issues/2712), which is not enabled by default. For **Scala 2.11.9 or later** you should add the following to your `build.sbt`:
@@ -61,7 +61,7 @@ functionality, you can pick-and-choose from amongst these modules
  * [`cats-effect`](https://github.com/typelevel/cats-effect): standard `IO` type together with `Sync`, `Async` and `Effect` type classes 
  * [`cats-mtl`](https://github.com/typelevel/cats-mtl): transformer typeclasses for Cats' Monads, Applicatives and Functors.
  * [`mouse`](https://github.com/typelevel/mouse): a small companion to Cats that provides convenient syntax (aka extension methods) 
-
+ * [`kittens`](https://github.com/typelevel/kittens): automatic type class instance derivation for Cats and generic utility functions
 
 Release notes for Cats are available in [CHANGES.md](https://github.com/typelevel/cats/blob/master/CHANGES.md).
 
