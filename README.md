@@ -22,7 +22,7 @@ You can read the API Documentation, [here](https://typelevel.org/cats/api/cats/i
 
 ### Getting Started
 
-Cats is currently available for Scala 2.10, 2.11 and 2.12, and [Scala.js](http://www.scala-js.org/).
+Cats is currently available for Scala 2.10 (up to 1.2.x), 2.11,  2.12, 2.13.0-M4,  and [Scala.js](http://www.scala-js.org/).
 
 
 Cats relies on improved type inference via the fix for [SI-2712](https://github.com/scala/bug/issues/2712), which is not enabled by default. For **Scala 2.11.9 or later** you should add the following to your `build.sbt`:
@@ -34,7 +34,7 @@ scalacOptions += "-Ypartial-unification"
 **Or**, if you need to support older versions of Scala you can use the [sbt-partial-unification](https://github.com/fiadliel/sbt-partial-unification#sbt-partial-unification) plugin which extends support back through **Scala 2.10.6 or later**, to add it, simply add this line to your `plugins.sbt`:
 
 ```scala
-addSbtPlugin("org.lyranthe.sbt" % "partial-unification" % "1.2.0")
+addSbtPlugin("org.lyranthe.sbt" % "partial-unification" % "1.1.2")
 ```
 
 And then create the Cats dependency, by adding the following to your `build.sbt`:
@@ -61,7 +61,7 @@ functionality, you can pick-and-choose from amongst these modules
  * [`cats-effect`](https://github.com/typelevel/cats-effect): standard `IO` type together with `Sync`, `Async` and `Effect` type classes 
  * [`cats-mtl`](https://github.com/typelevel/cats-mtl): transformer typeclasses for Cats' Monads, Applicatives and Functors.
  * [`mouse`](https://github.com/typelevel/mouse): a small companion to Cats that provides convenient syntax (aka extension methods) 
-
+ * [`kittens`](https://github.com/typelevel/kittens): automatic type class instance derivation for Cats and generic utility functions
 
 Release notes for Cats are available in [CHANGES.md](https://github.com/typelevel/cats/blob/master/CHANGES.md).
 
@@ -182,6 +182,30 @@ It MUST be incremented if any public API functionality is marked as deprecated.
 Any binary breaking changes will require a *MAJOR* version bump, which we will be very
 cautious about. We will also consider using `organization` and package name for major 
 versioning in the future. But that decision is yet to be made. 
+
+### Adopters
+
+Here's a (non-exhaustive) list of companies that use Cats in production. Don't see yours? [You can add it in a PR!](https://github.com/typelevel/cats/edit/master/README.md)
+
+- [Apple Inc. (FEAR team)](https://news.ycombinator.com/item?id=16969118)
+- [Avast](https://avast.com)
+- [Banno Group inside of Jack Henry & Associates](https://banno.com/)
+- [buildo](https://buildo.io)
+- [Codecentric](https://codecentric.de)
+- [DriveTribe](https://drivetribe.com/)
+- [Eloquentix](https://eloquentrix.com)
+- [Evotor Marketplace](https://market.evotor.ru/)
+- [Underscore Consulting](https://underscore.io/)
+- [e.near](http://enear.co)
+- [E.ON](https://eon.com)
+- [formation.ai](https://formation.ai)
+- [iHeartRadio](https://iheart.com)
+- [Scalac](https://scalac.io)
+- [Scala Center](https://scala.epfl.ch)
+- [Spotahome](https://spotahome.com)
+- [Stripe](https://stripe.com)
+- [Zalando](https://zalando.com)
+- [47 Degrees](https://www.47deg.com)
 
 ### Maintainers
 
