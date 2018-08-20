@@ -34,7 +34,7 @@ scalacOptions += "-Ypartial-unification"
 **Or**, if you need to support older versions of Scala you can use the [sbt-partial-unification](https://github.com/fiadliel/sbt-partial-unification#sbt-partial-unification) plugin which extends support back through **Scala 2.10.6 or later**, to add it, simply add this line to your `plugins.sbt`:
 
 ```scala
-addSbtPlugin("org.lyranthe.sbt" % "partial-unification" % "1.2.0")
+addSbtPlugin("org.lyranthe.sbt" % "partial-unification" % "1.1.2")
 ```
 
 And then create the Cats dependency, by adding the following to your `build.sbt`:
@@ -61,7 +61,7 @@ functionality, you can pick-and-choose from amongst these modules
  * [`cats-effect`](https://github.com/typelevel/cats-effect): standard `IO` type together with `Sync`, `Async` and `Effect` type classes 
  * [`cats-mtl`](https://github.com/typelevel/cats-mtl): transformer typeclasses for Cats' Monads, Applicatives and Functors.
  * [`mouse`](https://github.com/typelevel/mouse): a small companion to Cats that provides convenient syntax (aka extension methods) 
-
+ * [`kittens`](https://github.com/typelevel/kittens): automatic type class instance derivation for Cats and generic utility functions
 
 Release notes for Cats are available in [CHANGES.md](https://github.com/typelevel/cats/blob/master/CHANGES.md).
 
@@ -82,8 +82,6 @@ By sharing the same set of type classes, instances and data types provided by Ca
  * [eff](https://github.com/atnos-org/eff): functional effects and effect handlers (alternative to monad transformers)
  * [Freestyle](https://github.com/frees-io/freestyle): pure functional framework for Free and Tagless Final apps & libs
  * [iota](https://github.com/frees-io/iota): Fast [co]product types with a clean syntax
- * [Kittens](https://github.com/milessabin/kittens): automatic type class derivation for Cats and generic utility functions
- * [mainecoon](https://github.com/kailuowang/mainecoon): Transform and compose tagless final encoded algebras
  * [Monocle](https://github.com/julien-truffaut/Monocle): an optics library for Scala (and Scala.js) strongly inspired by Haskell Lens.
  * [newts](https://github.com/julien-truffaut/newts): Defines newtypes compatible with Cats type classes
  * [origami](https://github.com/atnos-org/origami): monadic folds
@@ -182,6 +180,51 @@ It MUST be incremented if any public API functionality is marked as deprecated.
 Any binary breaking changes will require a *MAJOR* version bump, which we will be very
 cautious about. We will also consider using `organization` and package name for major 
 versioning in the future. But that decision is yet to be made. 
+
+### Adopters
+
+Here's a (non-exhaustive) list of companies that use Cats in production. Don't see yours? [You can add it in a PR!](https://github.com/typelevel/cats/edit/master/README.md)
+
+- [Anduin Transactions](https://anduintransact.com)
+- [Apple Inc. (FEAR team)](https://news.ycombinator.com/item?id=16969118)
+- [AutoScout24](https://www.autoscout24.com)
+- [Avast](https://avast.com)
+- [Banno Group inside of Jack Henry & Associates](https://banno.com/)
+- [buildo](https://buildo.io)
+- [Codacy](https://www.codacy.com/)
+- [Codecentric](https://codecentric.de)
+- [Colisweb](https://www.colisweb.com/)
+- [DriveTribe](https://drivetribe.com/)
+- [Dwolla](https://dwolla.com/)
+- [Earnest](https://www.earnest.com)
+- [eBay Inc.](https://www.ebay.com)
+- [Eloquentix](https://eloquentix.com)
+- [Evotor Marketplace](https://market.evotor.ru/)
+- [e.near](http://enear.co)
+- [E.ON](https://eon.com)
+- [formation.ai](https://formation.ai)
+- [HomeAway](https://www.homeaway.com)
+- [iHeartRadio](https://iheart.com)
+- [ITV](https://www.itv.com/)
+- [Lookout](https://www.lookout.com)
+- [Metacommerce](https://www.metacommerce.ru)
+- [NCR Edinburgh](https://ncredinburgh.com/)
+- [REA Group](https://www.realestate.com.au/)
+- [Rudder](https://rudder.io)
+- [Scalac](https://scalac.io)
+- [Scala Center](https://scala.epfl.ch)
+- [Snowplow Analytics](https://snowplowanalytics.com/)
+- [Spotahome](https://spotahome.com)
+- [Spotify](https://www.spotify.com)
+- [SpringerNature](https://www.springernature.com)
+- [Stripe](https://stripe.com)
+- [Teikametrics](http://teikametrics.com)
+- [The Guardian](https//www.theguardian.com)
+- [Underscore Consulting](https://underscore.io/)
+- [Wegtam GmbH](https://www.wegtam.com)
+- [Wix.com](https://www.wix.com)
+- [Zalando](https://zalando.com)
+- [47 Degrees](https://www.47deg.com)
 
 ### Maintainers
 
