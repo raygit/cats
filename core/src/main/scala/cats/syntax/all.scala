@@ -5,6 +5,7 @@ abstract class AllSyntaxBinCompat
     extends AllSyntax
     with AllSyntaxBinCompat0
     with AllSyntaxBinCompat1
+    with AllSyntaxBinCompat2
 
 trait AllSyntax
     extends AlternativeSyntax
@@ -68,3 +69,9 @@ trait AllSyntaxBinCompat1
     with SetSyntax
     with ValidatedExtensionSyntax
     with RepresentableSyntax
+
+trait AllSyntaxBinCompat2
+  extends ParallelTraverseSyntax
+    with EitherSyntaxBinCompat0
+    with ListSyntaxBinCompat0
+    with ValidatedSyntaxBincompat0
