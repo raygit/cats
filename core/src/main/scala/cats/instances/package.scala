@@ -1,7 +1,7 @@
 package cats
 
 package object instances {
-  object all             extends AllInstances with AllInstancesBinCompat0 with AllInstancesBinCompat1
+  object all             extends AllInstances with AllInstancesBinCompat0 with AllInstancesBinCompat1 with AllInstancesBinCompat2
   object bigInt          extends BigIntInstances
   object bigDecimal      extends BigDecimalInstances
   object bitSet          extends BitSetInstances
@@ -14,6 +14,7 @@ package object instances {
   object eq              extends EqInstances
   object equiv           extends EquivInstances
   object float           extends FloatInstances
+  object finiteDuration  extends FiniteDurationInstances
   object function        extends FunctionInstances with FunctionInstancesBinCompat0
   object future          extends FutureInstances
   object int             extends IntInstances
