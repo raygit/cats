@@ -33,7 +33,6 @@ lazy val commonSettings = Seq(
       false
   },
   resolvers ++= Seq(Resolver.sonatypeRepo("releases"), Resolver.sonatypeRepo("snapshots")),
-  fork in test := true,
   parallelExecution in Test := false,
   scalacOptions in (Compile, doc) := (scalacOptions in (Compile, doc)).value.filter(_ != "-Xfatal-warnings"),
   //todo: reenable doctests on 2.13 once it's officially released. it's disabled for now due to changes to the `toString` impl of collections
@@ -112,7 +111,9 @@ lazy val commonJvmSettings = Seq(
   testOptions in Test += {
     val flag = if ((isTravisBuild in Global).value) "-oCI" else "-oDF"
     Tests.Argument(TestFrameworks.ScalaTest, flag)
-  }
+  },
+  Test / fork := true,
+  Test / javaOptions := Seq("-Xmx6G")
 )
 
 lazy val commonNativeSettings = Seq(
@@ -390,7 +391,7 @@ lazy val macros = crossProject(JSPlatform, JVMPlatform)
 lazy val macrosJVM = macros.jvm
 lazy val macrosJS = macros.js
 
-lazy val kernel = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+lazy val kernel = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("kernel"))
   .settings(moduleName := "cats-kernel", name := "Cats kernel")
@@ -401,12 +402,10 @@ lazy val kernel = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(includeGeneratedSrc)
   .jsSettings(commonJsSettings)
   .jvmSettings(commonJvmSettings ++ mimaSettings("cats-kernel"))
-  .nativeSettings(commonNativeSettings)
   .settings(libraryDependencies += "org.scalacheck" %%% "scalacheck" % scalaCheckVersion(scalaVersion.value) % "test")
 
 lazy val kernelJVM = kernel.jvm
 lazy val kernelJS = kernel.js
-lazy val kernelNative = kernel.native
 
 lazy val kernelLaws = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
