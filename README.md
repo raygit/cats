@@ -254,6 +254,7 @@ Here's a (non-exhaustive) list of companies that use Cats in production. Don't s
 - [Lookout](https://www.lookout.com)
 - [Metacommerce](https://www.metacommerce.ru)
 - [Nezasa](https://www.nezasa.com)
+- [Nugit](https://www.nugit.co)
 - [NCR Edinburgh](https://ncredinburgh.com/)
 - [Ocado Technology](https://ocadotechnology.com)
 - [Packlink](https://packlink.com/)
